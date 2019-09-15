@@ -1,7 +1,8 @@
 {
     "env": {
         "es6": true,
-        "node": true
+        "node": true,
+        "browser": true
     },
     "extends": "eslint:recommended",
     "parserOptions": {
@@ -14,6 +15,9 @@
         ],
         "no-console": [
             "off"
+        ],
+        "no-unused-vars": [
+            "warn"
         ],
         "linebreak-style": [
             "error",
