@@ -8,6 +8,12 @@ const paths = {
   server: 'server.js'
 };
 
+const del = require('del');
+function clean() {
+  return del(paths.build);
+}
+exports.clean = clean;
+
 function html() {
   return src(paths.html + '/**/*.html')
     .pipe(dest(paths.build));
@@ -53,25 +59,27 @@ function js() {
 exports.js = js;
 
 const nodemon = require('gulp-nodemon');
-function server(cb) {
+function server(done) {
   let called = false;
   return nodemon({
     script: paths.server,
     ignore: [
       'gulpfile.js',
-      'node_modules/'
+      'node_modules/',
+      'src/',
+      'public/'
     ]
   }).on('start', function() {
     if(!called) {
       called = true;
-      cb();
+      done();
     }
   });
 }
 exports.server = server;
 
 const browsersync = require('browser-sync');
-function _browsersync() {
+function _browsersync(done) {
   browsersync({
     // server: {
     //   baseDir: paths.build
@@ -83,8 +91,9 @@ function _browsersync() {
       paths.build + '/**/*.*'
     ]
   });
+  done();
 }
-function _watch() {
+function _watch(done) {
   watch(paths.scss + '/**/*.scss', parallel(css))
     .on('change', function() {
       browsersync.reload({ stream: true });
@@ -95,11 +104,14 @@ function _watch() {
 
   watch(paths.html + '/**/*.html', parallel(html))
     .on('change', browsersync.reload);
+  done();
 }
 exports.watch = parallel(_watch, _browsersync);
 
 exports.default = series(
+  clean,
   parallel(html, js, css),
   server,
-  parallel(_browsersync, _watch)
+  _browsersync,
+  _watch
 );
