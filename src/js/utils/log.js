@@ -1,9 +1,17 @@
 const LOGLEVEL = 0;
 
-function log(level, ...msg) {
-  if(level >= LOGLEVEL) {
-    console.log(`${ performance.now() / 1000 }s >>`, ...msg);
+/**
+ * @param {number} importance - Optionally filter noise from logs
+ * @param  {...any} rest - What to log
+ */
+function log(importance, ...rest) {
+  const out = [];
+  if(typeof importance !== 'number') {
+    out.push(importance, ...rest);
+  } else if(importance >= LOGLEVEL) {
+    out.push(...rest);
   }
+  console.log('·   ', ...out);
 }
 
 export default log;
