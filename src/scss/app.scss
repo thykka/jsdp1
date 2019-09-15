@@ -1,0 +1,11 @@
+@import 'reset';
+
+:root {
+  --unit: 1rem;
+}
+
+html {
+  background-color: #111;
+  color: #bbb;
+  padding: var(--unit);
+}

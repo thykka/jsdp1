@@ -1,0 +1,30 @@
+{
+  "name": "demoplatform",
+  "version": "0.0.1",
+  "description": "Framework for canvas demos/games",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Moses Holmström",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.6.0",
+    "browser-sync": "^2.26.7",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^7.0.0",
+    "gulp-better-rollup": "^4.0.1",
+    "gulp-nodemon": "^2.4.2",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.2",
+    "rollup": "^1.21.3",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
+  },
+  "browserslist": "> 0.05%, not dead",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
