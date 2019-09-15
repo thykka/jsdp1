@@ -1,11 +1,14 @@
 
 const {
   PI,
-  floor, round, ceil,
-  sin, cos,
-  random,
-  log2, log10,
-
+//  floor,
+//  round,
+//  ceil,
+//  sin,
+//  cos,
+//  random,
+//  log2,
+//  log10,
 } = Math;
 
 const PI2 = PI * 2;
