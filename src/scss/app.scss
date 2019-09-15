@@ -9,3 +9,25 @@ html {
   color: #bbb;
   padding: var(--unit);
 }
+
+canvas {
+  outline: 1px solid;
+  vertical-align: top;
+}
+
+.jsdp1-container {
+  position: relative;
+}
+
+.jsdp1-container canvas {
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+}
+
+@media (orientation: landscape) {
+  .jsdp1-container canvas {
+    height: calc(100vh - var(--unit) * 2);
+    width: auto;
+  }
+}
