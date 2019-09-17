@@ -4,8 +4,11 @@
   --unit: 1rem;
 }
 
-html {
+body {
   background-color: #111;
   color: #bbb;
-  padding: var(--unit);
+}
+
+svg {
+  vertical-align: top;
 }

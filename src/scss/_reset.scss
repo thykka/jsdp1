@@ -1,8 +1,9 @@
 *, *::after, *::before {
-  box-sizing: border-box;
+  box-sizing: inherit;
 }
 
 :root {
+  box-sizing: border-box;
   font-family: sans-serif;
 }
 
