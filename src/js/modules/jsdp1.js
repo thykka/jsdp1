@@ -1,21 +1,4 @@
 /**
- * Shorthand math functions, because we're
- * probably gonna need them a lot
- */
-const {
-  PI,
-  floor,
-  cos,
-  // round,
-  // ceil,
-  // sin,
-  // random,
-  // log2,
-  // log10,
-} = Math;
-const PI2 = PI * 2;
-
-/**
  * jsDPI Class
  */
 class JsDP1 {
@@ -251,5 +234,22 @@ class JsDP1 {
     this.context.filter = 'none';
   }
 }
+
+/**
+ * Shorthand math functions, because we're
+ * probably gonna need them a lot
+ */
+const {
+  PI,
+  floor,
+  cos,
+  // round,
+  // ceil,
+  // sin,
+  // random,
+  // log2,
+  // log10,
+} = Math;
+const PI2 = PI * 2;
 
 export default JsDP1;
