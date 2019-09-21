@@ -1,3 +1,7 @@
+/**
+ * Shorthand math functions, because we're
+ * probably gonna need them a lot
+ */
 const {
   PI,
   floor,
@@ -9,9 +13,11 @@ const {
   // log2,
   // log10,
 } = Math;
-
 const PI2 = PI * 2;
 
+/**
+ * jsDPI Class
+ */
 class JsDP1 {
   /**
    * Constructs and initializes a new jsDP1 instance
@@ -146,6 +152,7 @@ class JsDP1 {
    * @param {Number} elapsed - Seconds elapsed since last update
    */
   update(state, elapsed) {
+    state.elapsed = elapsed;
     state.time += elapsed;
     state.frameIndex++;
   }
@@ -155,19 +162,20 @@ class JsDP1 {
    * @param {Object} state - The current state
    */
   draw(state) {
-    if(Math.round(state.time * 60) % 180 === 0) this.clear();
-    this.context.fillStyle = (state.time / 30 % 1) < 0.5
+    this.context.fillStyle = ((state.time * 3) % 1) < 0.875
       ? `hsl(${
-        (floor(state.time) * 60 - 45) % 360
-      }, 50%, 50%)`
+        (floor(state.time) * 30 - 120) % 360
+      }, 67%, 33%)`
       : `hsl(${
-        (floor(state.time) * 60 - 45) % 360
-      }, 80%, 20%)`;
-    this.context.rotate(state.elapsed / 10);
+        (floor(state.time) * 30 - 60) % 360
+      }, 97%, 5%)`;
+    this.context.translate(this.width / 2, this.height / 2);
+    this.context.rotate(state.elapsed * 4);
+    this.context.translate(-this.width / 2, -this.height / 2);
     this.drawText({
       text: 'jsDP1',
       x: 8 - cos(state.time) * 13,
-      y: this.height * (cos(state.time * 1.333333) * 0.4 + 0.6) + cos(state.time / 10) * 2,
+      y: this.height * (cos(state.time * 3) * 0.4 + 0.6) + cos(state.time / 10) * 2,
       fontSize: 46 + cos(state.time) * 10
     });
   }
@@ -231,6 +239,10 @@ class JsDP1 {
 
   /**
    * A wrapper for antialiased drawing. Utilizes an SVG element with ID "remove-alpha"
+   *
+   * NOTE: It kinda sucks…
+   *
+   * TODO: Make proper custom drawing functions, that don't antialias
    * @param {Function} fn - The drawing function to use
    */
   _noAntialias(fn) {
