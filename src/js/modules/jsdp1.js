@@ -12,8 +12,8 @@ class JsDP1 {
   constructor(options) {
     const defaults = {
       canvasId: 'jsdp1',
-      width: 128,
-      height: 128,
+      width: 256,
+      height: 256,
     };
 
     Object.assign(this, defaults, options);
@@ -24,6 +24,8 @@ class JsDP1 {
     this.initCanvas();
     this.setCanvasSize();
     this.initContext();
+
+    this.bindEvents();
 
     this.init(this.state);
     this.queueUpdate();
@@ -127,6 +129,16 @@ class JsDP1 {
   init(state) {
     state.time = 0;
     state.frameIndex = 0;
+    state.beam = {
+      x: this.width / 2,
+      y: this.height / 2
+    };
+    state.mirror = {
+      x: 0,
+      y: this.height - 20,
+      angle: 270,
+      width: this.width
+    };
   }
 
   /**
@@ -138,6 +150,38 @@ class JsDP1 {
     state.elapsed = elapsed;
     state.time += elapsed;
     state.frameIndex++;
+
+    this.updateBeam(state);
+    this.updateMirror(state);
+  }
+
+  updateBeam(state) {
+    state.beam.x = this._mouseX * this.width;
+    state.beam.y = this._mouseY * this.height;
+
+    state.beam.points = [
+      [state.beam.x, state.beam.y],
+      [state.mirror.x, state.mirror.y]
+    ];
+  }
+
+  updateMirror(state) {
+    state.mirror.x = this.width / 2 + sin(state.time / 13) * this.width / 3;
+    state.mirror.y = this.height * 0.8 + sin(state.time / 9) * this.width / 10;
+    state.mirror.angle = 270 + cos(state.time) * 20;
+
+    const offsetX = sin(state.mirror.angle / 360 * PI2) * state.mirror.width;
+    const offsetY = cos(state.mirror.angle / 360 * PI2) * state.mirror.width;
+
+    state.mirror.points = [
+      [
+        state.mirror.x + offsetX,
+        state.mirror.y - offsetY
+      ], [
+        state.mirror.x - offsetX,
+        state.mirror.y + offsetY
+      ]
+    ];
   }
 
   /**
@@ -145,94 +189,97 @@ class JsDP1 {
    * @param {Object} state - The current state
    */
   draw(state) {
-    this.context.fillStyle = ((state.time * 3) % 1) < 0.875
-      ? `hsl(${
-        (floor(state.time) * 30 - 120) % 360
-      }, 67%, 33%)`
-      : `hsl(${
-        (floor(state.time) * 30 - 60) % 360
-      }, 97%, 5%)`;
-    this.context.translate(this.width / 2, this.height / 2);
-    this.context.rotate(state.elapsed * 4);
-    this.context.translate(-this.width / 2, -this.height / 2);
-    this.drawText({
-      text: 'jsDP1',
-      x: 8 - cos(state.time) * 13,
-      y: this.height * (cos(state.time * 3) * 0.4 + 0.6) + cos(state.time / 10) * 2,
-      fontSize: 46 + cos(state.time) * 10
+    this.clear('#080808');
+
+
+    this.context.strokeStyle = '#222';
+    this.context.beginPath();
+    this.context.arc(
+      state.mirror.x, state.mirror.y,
+      this.width / 10,
+      PI / -2 + state.mirror.angle/360*PI2,
+      PI / 2 + state.mirror.angle/360*PI2
+    );
+    this.context.stroke();
+
+    this.line(state.mirror.points, '#222');
+    this.line(state.beam.points, '#F44');
+
+    const reflect = this.reflect(state.beam, state.mirror);
+    this.line([
+      [state.mirror.x, state.mirror.y],
+      [lerp(state.mirror.x, reflect.x, 9001), lerp(state.mirror.y, reflect.y, 9001)]
+    ], '#C22');
+
+
+  }
+
+  /**
+   * Wrapper for line drawing
+   */
+  line(points, color = '#fff', offset = 0.5) {
+    const c = this.context;
+    c.strokeStyle = color;
+    c.beginPath();
+    points.forEach(([x, y], i) => {
+      if(i > 0) {
+        c.lineTo(x + offset, y + offset);
+      } else {
+        c.moveTo(x + offset, y + offset);
+      }
     });
+    c.closePath();
+    c.stroke();
+  }
+
+  reflect(beam, mirror) {
+    // mirror angle in radians
+    const mirrorAngle = mirror.angle / 360 * PI2;
+    const beamAngle = atan2(mirror.x - beam.x, mirror.y - beam.y);
+    const parallel = beamAngle + (PI + mirrorAngle);
+    const diff = ((parallel + beamAngle) + mirrorAngle) % PI2;
+    const { x, y } = this.rotate(beam, mirror, diff);
+    return {
+      x, y,
+      angle: diff / PI2 * 360
+    };
+  }
+
+  rotate(point, origin, angle){
+    const c = cos(angle);
+    const s = sin(angle);
+    return {
+      x: c * (point.x - origin.x) - s * (point.y - origin.y) + origin.x,
+      y: s * (point.x - origin.x) + c * (point.y - origin.y) + origin.y
+    };
   }
 
   /**
    * Clears the canvas
    */
-  clear() {
-    const c = this.context;
-    c.clearRect(0, 0, this.width, this.height);
+  clear(color = false) {
+    if(!color) {
+      this.context.clearRect(0, 0, this.width, this.height);
+    } else {
+      this.context.fillStyle = color;
+      this.context.fillRect(0, 0, this.width, this.height);
+    }
   }
 
-  /**
-   * Draws aliased text
-   * @param {Object} options -
-   * @param {Number} options.x - The x-coordinate of the left edge
-   * @param {Number} options.y - The y-coordinate of the bottom edge
-   * @param {String} [options.text] - The text to draw
-   * @param {Number} [options.fontSize] - The font size to draw with
-   * @param {CanvasRenderingContext2D} [c] - The context
-   */
-  drawText({
-    x, y, text = '',
-    fontSize = 11
-  }, c = this.context) {
-    this._noAntialias(() => {
-      c.font = `${ fontSize }px sans-serif`;
-      c.fillText(text, x, y);
+  bindEvents() {
+    this._mouseX = 0;
+    this._mouseY = 0;
+    this.canvas.addEventListener('mousemove', e => {
+      const { layerX, layerY } = e;
+      const { width, height } = e.currentTarget.getBoundingClientRect();
+      this._mouseX = layerX / width;
+      this._mouseY = layerY / height;
     });
   }
+}
 
-  /**
-   * Draws an aliased circle
-   * @param {Object} options -
-   * @param {Number} options.x - X-coordinate of the circle's center
-   * @param {Number} options.y - Y-coordinate of the circle's center
-   * @param {Number} [options.radius] - The circle's radius in pixels
-   * @param {Number} [options.lineWidth] - The stroke width
-   * @param {String} [options.fillStyle] - The fillStyle. When this option is present, the circle is filled, not outlined
-   * @param {CanvasRenderingContext2D} [c] - The context
-   */
-  drawCircle({
-    x, y,
-    radius = 1,
-    lineWidth = 1 - (1 / 6),
-    fillStyle = null
-  }, c = this.context) {
-    this._noAntialias(() => {
-      c.beginPath();
-      c.arc(x, y, radius, 0, PI2);
-      c.closePath();
-      if(fillStyle) {
-        c.fillStyle = fillStyle;
-        c.fill();
-      } else {
-        c.lineWidth = lineWidth;
-        c.stroke();
-      }
-    });
-  }
-
-  /**
-   * A wrapper for antialiased drawing. Utilizes an SVG element with ID "remove-alpha"
-   *
-   * NOTE: It kinda sucks…
-   *
-   * TODO: Make proper custom drawing functions, that don't antialias
-   * @param {Function} fn - The drawing function to use
-   */
-  _noAntialias(fn) {
-    this.context.filter = 'url(#remove-alpha)';
-    fn();
-    this.context.filter = 'none';
-  }
+function lerp(a, b, t) {
+  return a * (1 - t) + b * t;
 }
 
 /**
@@ -241,11 +288,14 @@ class JsDP1 {
  */
 const {
   PI,
+  atan2,
+  abs,
   floor,
   cos,
+  sqrt,
   // round,
   // ceil,
-  // sin,
+  sin,
   // random,
   // log2,
   // log10,
