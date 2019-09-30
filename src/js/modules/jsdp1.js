@@ -12,8 +12,8 @@ class JsDP1 {
   constructor(options) {
     const defaults = {
       canvasId: 'jsdp1',
-      width: 128,
-      height: 128,
+      width: 256,
+      height: 256,
     };
 
     Object.assign(this, defaults, options);
@@ -25,7 +25,7 @@ class JsDP1 {
     this.setCanvasSize();
     this.initContext();
 
-    this.init(this.state);
+    this._init(this.state);
     this.queueUpdate();
   }
 
@@ -88,8 +88,8 @@ class JsDP1 {
   updateLoop(t) {
     const { time, elapsed } = this.getTime(t);
 
-    this.update(this.state, elapsed);
-    this.draw(this.state);
+    this._update(this.state, elapsed);
+    this._draw(this.state);
 
     this.continueLoop(time);
   }
@@ -124,9 +124,11 @@ class JsDP1 {
    * The initialization function
    * @param {Object} state - The current state
    */
-  init(state) {
+  _init(state) {
     state.time = 0;
     state.frameIndex = 0;
+
+    this.init(state);
   }
 
   /**
@@ -134,33 +136,21 @@ class JsDP1 {
    * @param {Object} state - The current state
    * @param {Number} elapsed - Seconds elapsed since last update
    */
-  update(state, elapsed) {
+  _update(state, elapsed) {
     state.elapsed = elapsed;
     state.time += elapsed;
     state.frameIndex++;
+
+    this.update(state);
   }
 
   /**
    * The draw function
    * @param {Object} state - The current state
    */
-  draw(state) {
-    this.context.fillStyle = ((state.time * 3) % 1) < 0.875
-      ? `hsl(${
-        (floor(state.time) * 30 - 120) % 360
-      }, 67%, 33%)`
-      : `hsl(${
-        (floor(state.time) * 30 - 60) % 360
-      }, 97%, 5%)`;
-    this.context.translate(this.width / 2, this.height / 2);
-    this.context.rotate(state.elapsed * 4);
-    this.context.translate(-this.width / 2, -this.height / 2);
-    this.drawText({
-      text: 'jsDP1',
-      x: 8 - cos(state.time) * 13,
-      y: this.height * (cos(state.time * 3) * 0.4 + 0.6) + cos(state.time / 10) * 2,
-      fontSize: 46 + cos(state.time) * 10
-    });
+  _draw(state) {
+    this.clear();
+    this.draw(state);
   }
 
   /**
@@ -170,86 +160,6 @@ class JsDP1 {
     const c = this.context;
     c.clearRect(0, 0, this.width, this.height);
   }
-
-  /**
-   * Draws aliased text
-   * @param {Object} options -
-   * @param {Number} options.x - The x-coordinate of the left edge
-   * @param {Number} options.y - The y-coordinate of the bottom edge
-   * @param {String} [options.text] - The text to draw
-   * @param {Number} [options.fontSize] - The font size to draw with
-   * @param {CanvasRenderingContext2D} [c] - The context
-   */
-  drawText({
-    x, y, text = '',
-    fontSize = 11
-  }, c = this.context) {
-    this._noAntialias(() => {
-      c.font = `${ fontSize }px sans-serif`;
-      c.fillText(text, x, y);
-    });
-  }
-
-  /**
-   * Draws an aliased circle
-   * @param {Object} options -
-   * @param {Number} options.x - X-coordinate of the circle's center
-   * @param {Number} options.y - Y-coordinate of the circle's center
-   * @param {Number} [options.radius] - The circle's radius in pixels
-   * @param {Number} [options.lineWidth] - The stroke width
-   * @param {String} [options.fillStyle] - The fillStyle. When this option is present, the circle is filled, not outlined
-   * @param {CanvasRenderingContext2D} [c] - The context
-   */
-  drawCircle({
-    x, y,
-    radius = 1,
-    lineWidth = 1 - (1 / 6),
-    fillStyle = null
-  }, c = this.context) {
-    this._noAntialias(() => {
-      c.beginPath();
-      c.arc(x, y, radius, 0, PI2);
-      c.closePath();
-      if(fillStyle) {
-        c.fillStyle = fillStyle;
-        c.fill();
-      } else {
-        c.lineWidth = lineWidth;
-        c.stroke();
-      }
-    });
-  }
-
-  /**
-   * A wrapper for antialiased drawing. Utilizes an SVG element with ID "remove-alpha"
-   *
-   * NOTE: It kinda sucks…
-   *
-   * TODO: Make proper custom drawing functions, that don't antialias
-   * @param {Function} fn - The drawing function to use
-   */
-  _noAntialias(fn) {
-    this.context.filter = 'url(#remove-alpha)';
-    fn();
-    this.context.filter = 'none';
-  }
 }
-
-/**
- * Shorthand math functions, because we're
- * probably gonna need them a lot
- */
-const {
-  PI,
-  floor,
-  cos,
-  // round,
-  // ceil,
-  // sin,
-  // random,
-  // log2,
-  // log10,
-} = Math;
-const PI2 = PI * 2;
 
 export default JsDP1;
