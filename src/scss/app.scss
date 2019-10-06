@@ -11,19 +11,49 @@ html {
 }
 
 canvas {
-  outline: 1px solid;
   vertical-align: top;
 }
 
 .jsdp1-container {
+  overflow: hidden;
   position: relative;
-  width: 100%;
+  display: inline-block;
 }
 
 .jsdp1-container canvas {
+  border: 1px solid;
   width: 100%;
   height: auto;
   image-rendering: pixelated;
+}
+
+.jsdp1-controls {
+  background-color: #fff1;
+  padding: var(--unit);
+  position: absolute;
+  top: 0;
+  width: 15rem;
+  transform: translateX(-15rem);
+  transition: transform 0.3s 0.5s ease-out;
+
+  > label {
+    display: flex;
+    flex-flow: row wrap;
+
+    output {
+      margin-left: var(--unit);
+    }
+
+    input {
+      margin: var(--unit) 0 0;
+      width: 100%;
+    }
+  }
+
+  @at-root .jsdp1-container:hover & {
+    transform: translateX(0);
+    transition-delay: 0s;
+  }
 }
 
 @media (orientation: landscape) {

@@ -11,9 +11,7 @@ class JsDP1 {
    */
   constructor(options) {
     const defaults = {
-      canvasId: 'jsdp1',
-      width: 256,
-      height: 256,
+      canvasId: 'jsdp1'
     };
 
     Object.assign(this, defaults, options);
@@ -57,6 +55,11 @@ class JsDP1 {
    * Matches canvas size with class instance's width & height
    */
   setCanvasSize() {
+    if(!this.width || !this.height) {
+      const vmin = Math.min(this.canvas.offsetWidth, this.canvas.offsetHeight);
+      this.width = vmin;
+      this.height = vmin;
+    }
     this.canvas.width = this.width;
     this.canvas.height = this.height;
   }

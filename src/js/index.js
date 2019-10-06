@@ -15,4 +15,6 @@ function app () {
   log(demo);
 }
 
-app();
+document.addEventListener('DOMContentLoaded', () => {
+  app();
+});
