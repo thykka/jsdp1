@@ -15,20 +15,74 @@ canvas {
   vertical-align: top;
 }
 
+a {
+  color: currentColor;
+}
+
+#root {
+  display: flex;
+  align-items: center;
+  flex-flow: column nowrap;
+}
+
 .jsdp1-container {
-  position: relative;
   width: 100%;
+  position: relative;
 }
 
 .jsdp1-container canvas {
   width: 100%;
-  height: auto;
   image-rendering: pixelated;
 }
 
+
+footer {
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.jsdp1-sidebar {
+  align-items: center;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
 @media (orientation: landscape) {
+  .jsdp1-container {
+    flex: 0 1 auto;
+    width: auto;
+  }
   .jsdp1-container canvas {
     height: calc(100vh - var(--unit) * 2);
     width: auto;
+  }
+}
+
+@media (min-width: calc(100vh + 10em)) {
+  #root {
+    display: flex;
+    align-items: stretch;
+    margin: 0 auto;
+    flex-flow: row wrap;
+    width: calc(100vh + 10em);
+  }
+  .jsdp1-sidebar {
+    align-items: flex-start;
+    flex: 1 0 10em;
+    flex-flow: row wrap;
+    padding-left: 1em;
+
+    section {
+      flex: 1 0 100%;
+
+      &:first-child > :first-child {
+        margin-top: 0;
+      }
+    }
+    footer {
+      flex: 1 0 100%;
+      align-self: flex-end;
+    }
   }
 }

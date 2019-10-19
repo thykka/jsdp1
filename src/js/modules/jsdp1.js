@@ -12,8 +12,8 @@ class JsDP1 {
   constructor(options) {
     const defaults = {
       canvasId: 'jsdp1',
-      width: 256,
-      height: 256,
+      width: 512,
+      height: 512,
     };
 
     Object.assign(this, defaults, options);
@@ -56,9 +56,9 @@ class JsDP1 {
   /**
    * Matches canvas size with class instance's width & height
    */
-  setCanvasSize() {
-    this.canvas.width = this.width;
-    this.canvas.height = this.height;
+  setCanvasSize(canvas = this.canvas) {
+    canvas.width = this.width;
+    canvas.height = this.height;
   }
 
   /**
@@ -68,8 +68,9 @@ class JsDP1 {
     this.context = this.canvas.getContext('2d');
 
     // only effects pattern fills, drawImage()
-    this.context.imageSmoothingEnabled = false;
+    //this.context.imageSmoothingEnabled = false;
     this.context.strokeStyle = '#fff';
+    this.context.imageSmoothingQuality = 'high';
   }
 
   /**

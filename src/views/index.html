@@ -8,19 +8,21 @@
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-  <section class="jsdp1-container">
-    <canvas id="jsdp1"></canvas>
-  </section>
-  <svg width="0" height="0" style="position:absolute; z-index:-1;">
-    <defs>
-      <filter id="remove-alpha" x="-5%" y="-5%" width="110%" height="110%">
-        <feGaussianBlur stdDeviation="0.5" />
-        <feComponentTransfer>
-          <feFuncA type="discrete" tableValues="0 1"></feFuncA>
-        </feComponentTransfer>
-      </filter>
-    </defs>
-  </svg>
+  <div id="root">
+    <section class="jsdp1-container">
+      <canvas id="jsdp1"></canvas>
+    </section>
+    <aside class="jsdp1-sidebar">
+      <section>
+        <h1>{{ title }}</h1>
+      </section>
+      <footer>
+        <p>Built with
+          <a href="https://github.com/thykka/jsdp1">jsDP1</a>
+        </p>
+      </footer>
+    </aside>
+  </div>
   <script src="js/index.js"></script>
 </body>
 </html>
