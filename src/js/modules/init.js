@@ -1,7 +1,5 @@
 const {
-  abs,
   floor,
-  PI,
   random
 } = Math;
 
@@ -14,14 +12,9 @@ const init = function(state) {
 
   this.setCanvasSize(state.texture.canvas);
 
-  drawTexture(state.texture);
-};
-
-function drawTexture({ context, canvas }) {
-  const [w, h, c] = [
-    canvas.width,
-    canvas.height,
-    context
+  const [w, h] = [
+    this.width,
+    this.height
   ];
   const colors = [
     [0, 0, 0],
@@ -45,7 +38,7 @@ function drawTexture({ context, canvas }) {
     });
     pattern.data[i + 3] = random() > 0.95 ? 255 : 0;
   });
-  c.putImageData(pattern, 0, 0);
-}
+  state.texture.context.putImageData(pattern, 0, 0);
+};
 
 export default init;

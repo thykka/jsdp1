@@ -26,7 +26,7 @@ function css() {
   return src(paths.scss + '/**/*.scss', { sourcemaps: true })
     .pipe(
       sass({
-        includePaths: [paths.scss + '/'],
+        includePaths: [paths.scss + '/', 'node_modules/'],
         outputStyle: 'expanded'
       }).on('error', function error (e) {
         console.log(e.message);

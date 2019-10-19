@@ -26,6 +26,7 @@
   },
   "browserslist": "> 0.05%, not dead",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "prismjs": "^1.17.1"
   }
 }
