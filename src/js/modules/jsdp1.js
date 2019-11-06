@@ -25,6 +25,8 @@ class JsDP1 {
     this.setCanvasSize();
     this.initContext();
 
+    this.bindEvents();
+
     this._init(this.state);
     this.queueUpdate();
   }
@@ -149,7 +151,7 @@ class JsDP1 {
    * @param {Object} state - The current state
    */
   _draw(state) {
-    this.clear();
+    //this.clear();
     this.draw(state);
   }
 
@@ -159,6 +161,18 @@ class JsDP1 {
   clear() {
     const c = this.context;
     c.clearRect(0, 0, this.width, this.height);
+  }
+
+  bindEvents() {
+    this._keys = new Map();
+    addEventListener('keydown', ev => {
+      ev.preventDefault();
+      this._keys.set(ev.key, true);
+    });
+    addEventListener('keyup', ev => {
+      ev.preventDefault();
+      this._keys.delete(ev.key);
+    });
   }
 }
 
