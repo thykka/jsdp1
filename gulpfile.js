@@ -2,10 +2,11 @@ const { series, parallel, src, dest, watch } = require('gulp');
 
 const paths = {
   build: 'public',
+  static: 'src/static',
   scss: 'src/scss',
   js: 'src/js',
   html: 'src/views',
-  server: 'server.js'
+  server: 'server.js',
 };
 
 const del = require('del');
@@ -13,6 +14,12 @@ function clean() {
   return del(paths.build);
 }
 exports.clean = clean;
+
+function staticFiles() {
+  return src(paths.static + '/**/*')
+    .pipe(dest(paths.build));
+}
+exports.static = staticFiles;
 
 function html() {
   return src(paths.html + '/**/*.html')
@@ -94,6 +101,11 @@ function _browsersync(done) {
   done();
 }
 function _watch(done) {
+  watch(paths.static + '/**', parallel(staticFiles))
+    .on('change', function() {
+      browsersync.reload();
+    });
+
   watch(paths.scss + '/**/*.scss', parallel(css))
     .on('change', function() {
       browsersync.reload({ stream: true });
@@ -104,13 +116,14 @@ function _watch(done) {
 
   watch(paths.html + '/**/*.html', parallel(html))
     .on('change', browsersync.reload);
+
   done();
 }
 exports.watch = parallel(_watch, _browsersync);
 
 exports.default = series(
   clean,
-  parallel(html, js, css),
+  parallel(staticFiles, html, js, css),
   server,
   _browsersync,
   _watch

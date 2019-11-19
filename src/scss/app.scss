@@ -10,25 +10,23 @@ html {
   padding: var(--unit);
 }
 
-canvas {
-  outline: 1px solid;
-  vertical-align: top;
+body {
+  min-height: 100vh;
+  --rings: 10;
+  animation: ringsAnim 1s infinite linear;
+  background-image: paint(houdiniTest);
 }
 
-.jsdp1-container {
-  position: relative;
-  width: 100%;
-}
-
-.jsdp1-container canvas {
-  width: 100%;
-  height: auto;
-  image-rendering: pixelated;
-}
-
-@media (orientation: landscape) {
-  .jsdp1-container canvas {
-    height: calc(100vh - var(--unit) * 2);
-    width: auto;
-  }
+@keyframes ringsAnim {
+  0% { --rings:1; }
+  10% { --rings:2; }
+  20% { --rings:3; }
+  30% { --rings:4; }
+  40% { --rings:5; }
+  50% { --rings:6; }
+  60% { --rings:7; }
+  70% { --rings:8; }
+  80% { --rings:9; }
+  90% { --rings:10; }
+  100% { --rings:11; }
 }
