@@ -34,3 +34,7 @@ $ npm i .
 ```sh
 $ gulp
 ```
+
+## Examples
+
+See this repo's other branches for some small demo projects
